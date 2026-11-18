@@ -1,0 +1,118 @@
+
+/* СТРАНИЦА ИЗБРАННОГО */
+
+.favorites-page {
+    max-width: 1400px;
+    margin: 50px auto;
+    padding: 0 30px;
+    min-height: 70vh;
+}
+
+.favorites-page h1 {
+    color: white;
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.favorites-subtitle {
+    color: #aaa;
+    font-size: 16px;
+    margin-bottom: 35px;
+}
+
+.favorites-page .movies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 25px;
+}
+
+.favorites-page .movie-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #1b1725;
+    transition: 0.3s;
+}
+
+.favorites-page .movie-card:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 10px 30px rgba(147, 51, 234, 0.25);
+}
+
+.favorites-page .movie-card img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.favorites-page .movie-info {
+    padding: 15px;
+}
+
+.favorites-page .movie-info h3 {
+    color: white;
+    font-size: 17px;
+    margin-bottom: 12px;
+}
+
+.remove-favorite {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: #9333ea;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.remove-favorite:hover {
+    background: #7e22ce;
+}
+
+.empty-favorites {
+    text-align: center;
+    color: white;
+    padding: 60px 20px;
+    grid-column: 1 / -1;
+}
+
+.empty-favorites h2 {
+    font-size: 28px;
+    margin-bottom: 15px;
+}
+
+.empty-favorites p {
+    color: #aaa;
+    margin-bottom: 25px;
+}
+
+.empty-favorites a {
+    display: inline-block;
+    padding: 12px 25px;
+    background: #9333ea;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+}
+
+.empty-favorites a:hover {
+    background: #7e22ce;
+}
+
+@media (max-width: 600px) {
+    .favorites-page {
+        padding: 0 15px;
+        margin-top: 30px;
+    }
+
+    .favorites-page h1 {
+        font-size: 28px;
+    }
+
+    .favorites-page .movies-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px;
+    }
+}

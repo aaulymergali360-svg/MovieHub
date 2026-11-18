@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой аккаунт — MovieHub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html" class="logo">MOVIE<span>HUB</span></a>
+        <a href="index.html" class="login-btn">На главную</a>
+    </header>
+
+    <main class="account-page">
+        <section class="account-card">
+
+            <div class="account-avatar">
+                <img id="avatarPreview"
+                     src="https://placehold.co/150x150/29203a/ffffff?text=USER"
+                     alt="Аватар пользователя">
+            </div>
+
+            <p class="section-label">ЛИЧНЫЙ ПРОФИЛЬ</p>
+            <h1>Мой аккаунт</h1>
+            <p class="account-subtitle">Управляй своим профилем MovieHub</p>
+
+            <form id="profileForm">
+
+                <label for="username">Имя пользователя</label>
+                <input
+                    type="text"
+                    id="username"
+                    minlength="2"
+                    maxlength="30"
+                    required
+                    placeholder="Твоё имя"
+                >
+
+                <label for="email">Электронная почта</label>
+                <input
+                    type="email"
+                    id="email"
+                    disabled
+                >
+
+                <label for="avatarUrl">Ссылка на аватар</label>
+                <input
+                    type="url"
+                    id="avatarUrl"
+                    placeholder="https://example.com/photo.jpg"
+                >
+
+                <button type="submit" class="save-button">
+                    Сохранить изменения
+                </button>
+
+            </form>
+
+            <button id="logoutButton" class="logout-button">
+                Выйти из аккаунта
+            </button>
+
+            <div id="message"></div>
+
+        </section>
+    </main>
+
+    <script src="account.js"></script>
+</body>
+</html>

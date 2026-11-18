@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieHub — Фильм</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="movie-details.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">MOVIE<span>HUB</span></div>
+
+        <nav>
+            <a href="index.html">Главная</a>
+            <a href="account.html">Мой аккаунт</a>
+        </nav>
+    </header>
+
+    <main class="movie-details" id="movieDetails">
+        <p>Загрузка информации о фильме...</p>
+    </main>
+        <section class="reviews-section">
+        <h2>⭐ Оценки и отзывы</h2>
+
+        <div class="review-form" id="reviewForm">
+            <h3>Оставить свой отзыв</h3>
+
+            <label for="reviewRating">Твоя оценка:</label>
+
+            <select id="reviewRating">
+                <option value="10">10 — Отлично</option>
+                <option value="9">9 — Очень хорошо</option>
+                <option value="8">8 — Хорошо</option>
+                <option value="7">7 — Неплохо</option>
+                <option value="6">6 — Нормально</option>
+                <option value="5">5 — Средне</option>
+                <option value="4">4 — Не очень</option>
+                <option value="3">3 — Плохо</option>
+                <option value="2">2 — Очень плохо</option>
+                <option value="1">1 — Ужасно</option>
+            </select>
+
+            <textarea
+                id="reviewComment"
+                placeholder="Поделись впечатлениями о фильме..."
+                maxlength="2000"
+            ></textarea>
+
+            <button id="submitReview">Опубликовать отзыв</button>
+            <p id="reviewMessage"></p>
+        </div>
+
+        <div id="reviewsList">
+            <p>Загрузка отзывов...</p>
+        </div>
+        </section>
+         <script src="movie.js"></script>
+</body>
+</html>
+        

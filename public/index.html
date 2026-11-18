@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieHub — Мир кино</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="logo">MOVIE<span>HUB</span></div>
+
+        <nav class="nav">
+            <a href="index.html">Главная</a>
+            <a href="#movies">Фильмы</a>
+            <a href="#popular">Популярное</a>
+            <a href="favorites.html">❤️ Избранное</a>
+        </nav>
+
+        <div class="auth-buttons" id="authButtons">
+            <a href="login.html" class="login-btn">Войти</a>
+            <a href="register.html" class="register-btn">Регистрация</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <p class="hero-label">ТВОЙ МИР КИНО</p>
+                <h1>Открой для себя<br><span>новые фильмы</span></h1>
+                <p class="hero-description">
+                    Смотри информацию о любимых фильмах,
+                    находи новые истории и сохраняй интересное.
+                </p>
+
+                <div class="search">
+                    <input type="text" id="searchInput" placeholder="Найти фильм...">
+                    <button id="searchButton">Найти</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="movies-section" id="movies">
+            <div class="section-heading">
+                <div>
+                    <p class="section-label">КОЛЛЕКЦИЯ</p>
+                    <h2>Популярные фильмы</h2>
+                </div>
+            </div>
+
+            <div class="movies-grid">
+                <p>Загрузка фильмов...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="logo">MOVIE<span>HUB</span></div>
+        <p>© 2026 MovieHub. Мир кино в одном месте.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
