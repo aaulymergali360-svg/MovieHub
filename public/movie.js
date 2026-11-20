@@ -1,4 +1,3 @@
-
 const API_KEY = "d2ba388232dbec7170c572dc2ca57a6d";
 
 const IMAGE_URL = "https://image.tmdb.org/t/p/w500";
@@ -142,9 +141,7 @@ function escapeHTML(value) {
     })[char]);
 }
 
-// =====================================
-// СИСТЕМА ОТЗЫВОВ И ОЦЕНОК
-// =====================================
+
 
 const reviewsList = document.getElementById("reviewsList");
 const reviewRating = document.getElementById("reviewRating");
@@ -153,10 +150,24 @@ const submitReview = document.getElementById("submitReview");
 const reviewMessage = document.getElementById("reviewMessage");
 
 let currentReviewUser = null;
+let editingReviewId = null;
 
-// =====================================
-// ПОЛУЧЕНИЕ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ
-// =====================================
+
+const editActionsRow = document.createElement("div");
+editActionsRow.className = "review-edit-actions";
+
+const cancelEditButton = document.createElement("button");
+cancelEditButton.textContent = "Отменить редактирование";
+cancelEditButton.className = "cancel-edit";
+cancelEditButton.style.display = "none";
+cancelEditButton.type = "button";
+
+if (submitReview && submitReview.parentNode) {
+    submitReview.parentNode.insertBefore(editActionsRow, submitReview);
+    editActionsRow.appendChild(submitReview);
+    editActionsRow.appendChild(cancelEditButton);
+}
+
 
 async function getReviewUser() {
     try {
@@ -171,17 +182,13 @@ async function getReviewUser() {
 
         currentReviewUser = data.id ? data : null;
 
-        console.log("Текущий пользователь:", currentReviewUser);
-
     } catch (error) {
         console.error("Ошибка получения пользователя:", error);
         currentReviewUser = null;
     }
 }
 
-// =====================================
-// ЗАГРУЗКА ОТЗЫВОВ
-// =====================================
+
 
 async function loadReviews() {
     if (!reviewsList || !movieId) return;
@@ -190,8 +197,6 @@ async function loadReviews() {
         reviewsList.innerHTML = "<p>Загрузка отзывов...</p>";
 
         const response = await fetch(`/api/reviews/${movieId}`);
-
-        console.log("Статус загрузки отзывов:", response.status);
 
         if (!response.ok) {
             throw new Error("Не удалось загрузить отзывы");
@@ -216,10 +221,8 @@ async function loadReviews() {
 
             const avatar = document.createElement("img");
             avatar.className = "review-avatar";
-
             avatar.src = review.avatar_url ||
                 "https://placehold.co/100x100/29203a/ffffff?text=USER";
-
             avatar.alt = "Аватар пользователя";
 
             avatar.onerror = () => {
@@ -245,20 +248,38 @@ async function loadReviews() {
             card.appendChild(rating);
             card.appendChild(comment);
 
+          
             if (
                 currentReviewUser &&
                 Number(currentReviewUser.id) === Number(review.user_id)
             ) {
-                const deleteButton = document.createElement("button");
+                const actions = document.createElement("div");
+                actions.className = "review-actions";
 
+                // РЕДАКТИРОВАНИЕ
+                const editButton = document.createElement("button");
+                editButton.className = "edit-review";
+                editButton.textContent = "Редактировать";
+                editButton.type = "button";
+
+                editButton.addEventListener("click", () => {
+                    startEditReview(review);
+                });
+
+                // УДАЛЕНИЕ
+                const deleteButton = document.createElement("button");
                 deleteButton.className = "delete-review";
-                deleteButton.textContent = "🗑️ Удалить отзыв";
+                deleteButton.textContent = " Удалить отзыв";
+                deleteButton.type = "button";
 
                 deleteButton.addEventListener("click", () => {
                     deleteReview(review.id);
                 });
 
-                card.appendChild(deleteButton);
+                actions.appendChild(editButton);
+                actions.appendChild(deleteButton);
+
+                card.appendChild(actions);
             }
 
             reviewsList.appendChild(card);
@@ -272,18 +293,14 @@ async function loadReviews() {
     }
 }
 
-// =====================================
-// ПУБЛИКАЦИЯ ОТЗЫВА
-// =====================================
+
 
 async function sendReview() {
-    console.log("Нажата кнопка публикации");
 
     if (!currentReviewUser) {
+        reviewMessage.className = "";
         reviewMessage.textContent =
             "Сначала войди в аккаунт, чтобы оставить отзыв.";
-
-        console.log("Пользователь не авторизован");
         return;
     }
 
@@ -291,26 +308,27 @@ async function sendReview() {
     const comment = reviewComment.value.trim();
 
     if (!comment) {
+        reviewMessage.className = "";
         reviewMessage.textContent =
             "Напиши комментарий перед публикацией.";
         return;
     }
 
-    if (rating < 1 || rating > 10) {
-        reviewMessage.textContent = "Выбери оценку от 1 до 10.";
+    if (!Number.isInteger(rating) || rating < 1 || rating > 10) {
+        reviewMessage.className = "";
+        reviewMessage.textContent =
+            "Выбери оценку от 1 до 10.";
         return;
     }
 
     submitReview.disabled = true;
-    reviewMessage.textContent = "Сохранение...";
+
+    reviewMessage.className = "";
+    reviewMessage.textContent = editingReviewId
+        ? "Сохранение изменений..."
+        : "Публикация отзыва...";
 
     try {
-        console.log("Отправляем отзыв:", {
-            movie_id: movieId,
-            rating,
-            comment
-        });
-
         const response = await fetch("/api/reviews", {
             method: "POST",
             headers: {
@@ -323,26 +341,27 @@ async function sendReview() {
             })
         });
 
-        console.log("Статус ответа сервера:", response.status);
-
         const data = await response.json();
-
-        console.log("Ответ сервера:", data);
 
         if (!response.ok) {
             throw new Error(data.error || "Ошибка сохранения");
         }
 
-        reviewMessage.textContent =
-            "Отзыв успешно опубликован! ❤️";
+        const wasEditing = editingReviewId !== null;
 
-        reviewComment.value = "";
+        cancelEditReview();
+
+        reviewMessage.className = "";
+        reviewMessage.textContent = wasEditing
+            ? "Отзыв успешно изменён! "
+            : "Отзыв успешно опубликован! ";
 
         await loadReviews();
 
     } catch (error) {
-        console.error("ОШИБКА ПУБЛИКАЦИИ:", error);
+        console.error("Ошибка сохранения отзыва:", error);
 
+        reviewMessage.className = "";
         reviewMessage.textContent = error.message;
 
     } finally {
@@ -351,10 +370,62 @@ async function sendReview() {
 }
 
 // =====================================
+// НАЧАЛО РЕДАКТИРОВАНИЯ
+// =====================================
+
+function startEditReview(review) {
+
+    editingReviewId = review.id;
+
+    reviewRating.value = String(review.rating);
+    reviewComment.value = review.comment;
+
+    submitReview.textContent = "Сохранить изменения";
+
+    cancelEditButton.style.display = "inline-flex";
+
+    reviewMessage.className = "editing-hint";
+    reviewMessage.textContent =
+        "Ты редактируешь свой отзыв ";
+
+    reviewComment.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+
+    reviewComment.focus();
+}
+
+// =====================================
+// ОТМЕНА РЕДАКТИРОВАНИЯ
+// =====================================
+
+function cancelEditReview() {
+
+    editingReviewId = null;
+
+    reviewRating.value = "10";
+    reviewComment.value = "";
+
+    submitReview.textContent = "Опубликовать отзыв";
+
+    cancelEditButton.style.display = "none";
+
+    reviewMessage.className = "";
+    reviewMessage.textContent = "";
+}
+
+cancelEditButton.addEventListener(
+    "click",
+    cancelEditReview
+);
+
+// =====================================
 // УДАЛЕНИЕ ОТЗЫВА
 // =====================================
 
 async function deleteReview(reviewId) {
+
     if (!confirm("Ты действительно хочешь удалить отзыв?")) {
         return;
     }
@@ -370,10 +441,18 @@ async function deleteReview(reviewId) {
             throw new Error(data.error || "Ошибка удаления");
         }
 
+        if (Number(editingReviewId) === Number(reviewId)) {
+            cancelEditReview();
+        }
+
+        reviewMessage.className = "";
+        reviewMessage.textContent = "Отзыв удалён!";
+
         await loadReviews();
 
     } catch (error) {
         console.error("Ошибка удаления:", error);
+
         alert(error.message);
     }
 }
@@ -383,6 +462,7 @@ async function deleteReview(reviewId) {
 // =====================================
 
 async function initReviews() {
+
     if (!reviewsList) return;
 
     if (!movieId) {
